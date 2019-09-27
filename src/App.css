@@ -6,8 +6,21 @@ body {
 }
 
 .id-lookup-container {
+  display: grid;
+    grid-template-columns: 1fr 1fr;
   text-align: left;
   margin: auto;
+  max-height: 350px;
+  overflow: auto;
+}
+.id-lookup-container div {
+  height: 40px;
+  white-space: nowrap;
+}
+.id-lookup-container div .name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: calc(100% - 50px);
 }
 
 .profile-container {
@@ -45,12 +58,10 @@ body {
 
 
 .page-body {
-  display: block;
   background-color: beige;
-  width: 50%;
   display: flex;
   flex-direction: column;
-  margin: auto;
+  margin: auto 30px;
   padding: 20px;
   margin-top: 10%;
   border-radius: 20px;
@@ -77,14 +88,12 @@ input:focus {
   outline: none;
 }
 button {
-  padding: 12px;
-  margin: 20px;
-  margin-top: 20px;
+  padding: 6px;
+  margin: 6px;
   border-radius: 12px;
   color: lime;
   background: white;
   font-weight: 700;
-  box-shadow: 2px 2px 1px white;
   border: 2px solid lime;
   transition: color 200ms, background 300ms;
   cursor: pointer;

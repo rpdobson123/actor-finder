@@ -12,7 +12,7 @@ class App extends React.Component {
       err: '',
       searchName: '',
       step: 'inputs',
-      ids: [],
+      ids: ['', ''],
     }
   }
 
@@ -68,17 +68,17 @@ class App extends React.Component {
     return <div className="input-container">
       <div>
         <label>Enter First ID:</label>
-        <input autoFocus onChange={e => this.setState({ ids: [e.currentTarget.value, ids[1] || ''] })} />
+        <input autoFocus onChange={e => this.setState({ ids: [e.currentTarget.value, ids[1] || ''] })} value={ids[0]} />
       </div>
       <div>
         <label>Enter Second ID:</label>
-        <input onChange={e => this.setState({ ids: [ids[0] || '', e.currentTarget.value] })} />
+        <input onChange={e => this.setState({ ids: [ids[0] || '', e.currentTarget.value] })} value={ids[1]} />
       </div>
       <button onClick={this.submitInputs}>Search</button>
     </div>
   }
   renderResults = () => {
-    return <div><div><button onClick={() => this.setState({ step: 'inputs', commonCast: [], ids: [] })}>Try Again</button></div>
+    return <div><div><button onClick={() => this.setState({ step: 'inputs', commonCast: [], ids: ['', ''] })}>Try Again</button></div>
       {
         this.state.commonCast.length ? (
           <div className="profile-container">{this.state.commonCast.map(commonCastMember => <div className="profile">
@@ -91,7 +91,7 @@ class App extends React.Component {
             </div>
             <div className="actor"><b>{commonCastMember.person.name}</b></div>
           </div>)}</div>) :
-          <h4>Sadly, there is no crossover according to the tool. It might be wrong, I'm sorry</h4>}
+          <h4>Sadly, there are no crossover actors. It might be wrong, The data isn't perfect</h4>}
     </div>
   }
 
@@ -115,7 +115,10 @@ class App extends React.Component {
         this.setState({ idLookupResults: results, loadingLookup: false, searchName: '' })
         this.setState({ loadingLookup: false })
       }}>Search</button> : ''}
-      {this.state.idLookupResults && <div className="id-lookup-container">{this.state.idLookupResults.map(idLookupResult => <div><b>{idLookupResult.show.id}</b> - {idLookupResult.show.name} ({new Date(idLookupResult.show.premiered).getFullYear()}) </div>)}</div>}
+      {this.state.idLookupResults && <div className="id-lookup-container">{this.state.idLookupResults.map(idLookupResult => <div className="name"><b>{idLookupResult.show.id}</b> - {idLookupResult.show.name} ({new Date(idLookupResult.show.premiered).getFullYear()})
+        <button onClick={() => this.setState({ ids: [`${idLookupResult.show.id}`, this.state.ids[1]] })}>1</button>
+        <button onClick={() => this.setState({ ids: [this.state.ids[0], `${idLookupResult.show.id}`] })}>2</button>
+      </div>)}</div>}
       {this.state.idLookupResults && !this.state.idLookupResults.length ? 'No Results Found.' : ''}
     </div >
   }
