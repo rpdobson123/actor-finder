@@ -88,8 +88,8 @@ class App extends React.Component {
               <img src={(commonCastMember.characterA.image || {}).medium || 'Question-mark-face.jpg'} />
               <img src={(commonCastMember.characterB.image || {}).medium || 'Question-mark-face.jpg'} />
               <img src={commonCastMember.person.image.medium || './Question-mark-face.jpg'} />
+              <div className="actor"><b>{commonCastMember.person.name}</b></div>
             </div>
-            <div className="actor"><b>{commonCastMember.person.name}</b></div>
           </div>)}</div>) :
           <h4>Sadly, there are no crossover actors. It might be wrong, The data isn't perfect</h4>}
     </div>
