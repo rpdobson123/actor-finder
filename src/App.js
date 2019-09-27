@@ -91,7 +91,7 @@ class App extends React.Component {
             </div>
             <div className="actor"><b>{commonCastMember.person.name}</b></div>
           </div>)}</div>) :
-          <h4>Sadly, there is no crossover according to IMDB</h4>}
+          <h4>Sadly, there is no crossover according to the tool. It might be wrong, I'm sorry</h4>}
     </div>
   }
 
