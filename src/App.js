@@ -2,14 +2,15 @@ import React from 'react';
 import './App.css';
 
 
-const getFetchURL = (type = 'tv', id) =>
-  `https://api.themoviedb.org/3/${type}/${id}/credits?api_key=d619b44f7be3d2cdca96936a2c1eb556&language=en-US`
-const getIDLookupUrl = (query) => `https://api.themoviedb.org/3/search/tv?api_key=d619b44f7be3d2cdca96936a2c1eb556&language=en-US&query=${encodeURIComponent(query)}`;
+const getFetchURL = (id) =>
+  `http://api.tvmaze.com/shows/${id}/cast`;
+const getIDLookupUrl = (query) => `http://api.tvmaze.com/search/shows?q=${encodeURIComponent(query)}`;
 class App extends React.Component {
   constructor() {
     super();
     this.state = {
       err: '',
+      searchName: '',
       step: 'inputs',
       ids: [],
     }
@@ -26,14 +27,20 @@ class App extends React.Component {
       return false;
     }
     try {
-      const cast1 = (await fetch(getFetchURL('tv', ids[0].trim())).then(response => response.json())).cast;
-      const cast2 = (await fetch(getFetchURL('tv', ids[1].trim())).then(response => response.json())).cast;
-      console.log({ cast1, cast2 })
-      const cast1CreditIds = cast1.map(cast => cast.id);
-      const cast2CreditIds = cast2.map(cast => cast.id);
-      const commonCastIds = cast1CreditIds.filter(castId => cast2CreditIds.includes(castId));
+      const cast1 = (await fetch(getFetchURL(ids[0].trim())).then(response => response.json()));
+      const cast2 = (await fetch(getFetchURL(ids[1].trim())).then(response => response.json()));
+      const cast1PersonIds = cast1.map(cast => cast.person.id);
+      const cast2PersonIds = cast2.map(cast => cast.person.id);
+      const commonCastIds = cast1PersonIds.filter(castId => cast2PersonIds.includes(castId));
       this.setState({
-        commonCast: commonCastIds.map(castId => ({ castA: cast1.find(cast => cast.id === castId), castB: cast2.find(cast => cast.id === castId) })),
+        commonCast: commonCastIds.map(castId => {
+          const castA = cast1.find(cast => cast.person.id === castId);
+          const castB = cast2.find(cast => cast.person.id === castId);
+          const person = castA.person;
+          const characterA = castA.character;
+          const characterB = castB.character;
+          return ({ person, characterA, characterB });
+        }),
         step: 'results'
       });
     } catch (err) {
@@ -75,10 +82,14 @@ class App extends React.Component {
       {
         this.state.commonCast.length ? (
           <div className="profile-container">{this.state.commonCast.map(commonCastMember => <div className="profile">
-            <div className="characters"><b>{commonCastMember.castA.character}</b> and <b>{commonCastMember.castB.character}</b></div>
-            <div className="actor">are played by <b>{commonCastMember.castA.name}</b></div>
-            <img src={`https://image.tmdb.org/t/p/w500/${commonCastMember.castA.profile_path}`} />
-            <div className="actor"><b>{commonCastMember.castA.name}</b></div>
+            <div className="characters"><b>{commonCastMember.characterA.name}</b> and <b>{commonCastMember.characterB.name}</b></div>
+            <div className="actor">are played by <b>{commonCastMember.person.name}</b></div>
+            <div className="image-container">
+              <img src={(commonCastMember.characterA.image || {}).medium || 'Question-mark-face.jpg'} />
+              <img src={(commonCastMember.characterB.image || {}).medium || 'Question-mark-face.jpg'} />
+              <img src={commonCastMember.person.image.medium || './Question-mark-face.jpg'} />
+            </div>
+            <div className="actor"><b>{commonCastMember.person.name}</b></div>
           </div>)}</div>) :
           <h4>Sadly, there is no crossover according to IMDB</h4>}
     </div>
@@ -100,11 +111,11 @@ class App extends React.Component {
       <label>Name: </label><input onChange={e => this.setState({ searchName: e.currentTarget.value })} value={this.state.searchName} />
       {this.state.searchName ? <button onClick={async () => {
         this.setState({ loadingLookup: true })
-        const results = (await (await fetch(getIDLookupUrl(this.state.searchName))).json()).results;
+        const results = (await (await fetch(getIDLookupUrl(this.state.searchName))).json());
         this.setState({ idLookupResults: results, loadingLookup: false, searchName: '' })
         this.setState({ loadingLookup: false })
       }}>Search</button> : ''}
-      {this.state.idLookupResults && <div className="id-lookup-container">{this.state.idLookupResults.map(idLookupResult => <div><b>{idLookupResult.id}</b> - {idLookupResult.name} ({new Date(idLookupResult.first_air_date).getFullYear()}) </div>)}</div>}
+      {this.state.idLookupResults && <div className="id-lookup-container">{this.state.idLookupResults.map(idLookupResult => <div><b>{idLookupResult.show.id}</b> - {idLookupResult.show.name} ({new Date(idLookupResult.show.premiered).getFullYear()}) </div>)}</div>}
       {this.state.idLookupResults && !this.state.idLookupResults.length ? 'No Results Found.' : ''}
     </div >
   }
@@ -124,7 +135,7 @@ class App extends React.Component {
         </div>
         <div className="attribution">
           <div>Made by Richard Dobson 2019</div>
-          <div>Thanks to <a href="https://www.themoviedb.org">theMovieDb</a> (TMDb) for their wonderful API.</div>
+          <div>Thanks to <a href="https://www.tvmaze.com">tvmaze</a> for their wonderful API.</div>
 
         </div>
       </div>
