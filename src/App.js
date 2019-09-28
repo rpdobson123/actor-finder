@@ -1,10 +1,9 @@
 import React from 'react';
 import './App.css';
 
-
 const getFetchURL = (id) =>
-  `http://api.tvmaze.com/shows/${id}/cast`;
-const getIDLookupUrl = (query) => `http://api.tvmaze.com/search/shows?q=${encodeURIComponent(query)}`;
+  `${window.location.protocol}//api.tvmaze.com/shows/${id}/cast`;
+const getIDLookupUrl = (query) => `${window.location.protocol}//api.tvmaze.com/search/shows?q=${encodeURIComponent(query)}`;
 class App extends React.Component {
   constructor() {
     super();
