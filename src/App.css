@@ -24,11 +24,11 @@ body {
 }
 
 .profile {
-  margin: 20px;
+  margin: 20px auto;
 }
 .profile-container {
   display: grid;
-  grid-template-columns: repeat(auto-fill, 50%);
+  grid-template-columns: repeat(auto-fill, minmax(50%, 400px));
 }
 .image-container {
   display: grid;
@@ -45,7 +45,7 @@ body {
   grid-row: 1 / span 2;
 }
 .image-container *:nth-child(4) {
-  grid-column: 2;
+  grid-column: span 2;
 }
 .image-container img {
   width: 100%;
